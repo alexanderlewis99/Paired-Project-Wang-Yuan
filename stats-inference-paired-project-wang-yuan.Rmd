@@ -4,17 +4,97 @@ output: html_notebook
 author: "Alec Wang and Allen Yuan"
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+## Problem 1. Derivations.
+Let $X_1,\ldots,X_n$ be a random sample of observed detection distances from a half-normal distribution with pdf:
+$f(x)=\frac{2}{\sqrt{2\pi\sigma}}e^{-x^2/(2\sigma^2)}$ for $x\geq 0$.
+The expected value of $X$ is $E(X)=\sigma\sqrt{\frac{2}{\pi}}$ and the variance is $V(X)=\sigma^2(1-2/\pi).$
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+Note that this density is simply twice the pdf of a $N(0,\sigma^2)$ density and we can obtain a half-normal random variable $X$ by taking the absolute value of $Y\sim N(0,\sigma^2)(i.e. X=|Y|).$
+
+#### Part A
+The day 11 MLE examples (Wednesday of week 4) gives you the MLE $\hat\sigma_{MLE}$ for $\sigma$. The square of this MLE, $\hat\sigma^2_{MLE}$ is the MLE for $\sigma^2$. Derive the sampling distribution of $\hat\sigma^2_{MLE}$. (Hint: Use your probability Appendix theorems and you should end up with a Gamma!)
+
+#### Part B
+Derive the MoM estimator $\hat\sigma^2_{MoM}$ for $\sigma^2$.
+
+### Part C
+Determine whether the MLE and MoM estimators of $\sigma^2$  are unbiased. If one, or both, are biased, dervive the bias for that estimator.
+
+#### Part D
+Using your distribution from (a), derive an (exact) 95% confidence interval for $\sigma^2$ using the pivotal method described in chapter 7.
+
+## Part 2. Simuations
+
+We want to determine which estimator is “better” by using simulation to help assess estimator properties (like bias and MSE) along with confidence interval properties (like coverage rate and interval length). Here is the basic simulation set up:
+
+#### Part 1.
+Fix a value for $\sigma^2$ and $n$.
 
 ```{r}
-plot(cars)
+n <- # sample size
+sigma <- # value of sigma
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+#### Part 2.
+Take a sample of n half normal values using your values from (1):
+```{R}
+x <- abs(rnorm(n,0,sigma))   # generating half normal random sample
+```
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+#### Part 3
+For each sample, compute point estimates
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```{R}
+est_mle[i] <- # MLE formula
+est_mom[i] <- # MoM formula
+```
+
+#### Part 4
+For each sample, compute the lower and upper bounds for each of three competing CI methods:
+```{R}
+mle_lower[i] <- # based on exact MLE CI (part d)
+mle_upper[i] <- # based on exact MLE CI (part d)
+mle_boot_lower[i] <- # CI based on bootstrapping the MLE
+mle_boot_upper[i] <- 
+mom_boot_lower[i] <- # CI based on bootstrapping the MoM
+mom_boot_upper[i] <-
+
+```
+Note that you will have to create a bootstrap loop to generate the lower and upper bounds for your bootstrap CI for this one sample.
+
+
+
+#### Part 5
+Repeat 2-4 many times (`N`). Try at least 10k simulations!
+
+#### Part 6
+Compare your estimators in (3) to your true value of $\sigma^2$. Simulated bias, percent bias (as a percentage of the true $\sigma^2$) and MSE look like the following (for both MLE and MoM):
+
+```{R}
+bias <- mean(est) - sigma^2  
+perc_bias <- 100*bias/sigma^2  # bias as a percentage of sigma^2
+mse <- mean((est - sigma^2)^2) # mean of squared deviations (est - truth)^2
+```
+Note that you can compute the exact bias values for both estimators (part c), so your simulation bias values should be close to your exact values if your simulation size is big.
+
+#### Part 7
+Compare interval estimates in (4) by looking at how often they cover the true value of $\sigma^2$ and their mean length:
+```{R}
+cover <- mean((lower <= sigma^2) & (sigma^2 <= upper))
+mean.length <- mean(upper - lower)
+```
+We would like to have a coverage rate close to 95% (because that is what we are claiming for our confidence level). If two intervals have rates of about 95%, then we would prefer the interval that is shorter in mean length.
+
+#### Part 8
+Finally, some estimator properties may depend on your initial simulation values ($n$ and $\sigma^2$). You should explore how changing these values affects your conclusions about which point and interval estimators are “best.”
+Note: I’ve outlined the minimal criteria for the simulation. Feel free to try other estimators of $\sigma^2$ and/or other ways of computing a 95% confidence interval.
+
+## 3. Estimation for Bergen
+
+Based on your “best” results from parts 1 and 2, provide a point and interval estimate for $\sigma^2$ using the Bergen detection distances. Also use these values to give point and interval estimates for the probability $p_x$ of detecting a mussel that is “x” meters off the transect: $p_x=e^{-x^2/(2\sigma^2)}$.
+for “x” distances of 0.5 meters and 1 meter.
+
+Interesting aside: It is these detection probabilities that are then used to estimate how many mussels are in the lake. E.g. if we observe a mussel with a 0.5 probability of being detected, we can reason that there must also be one mussel (at the same distance) that we missed. Hence, this one mussel really represents two mussels in the entire population.
+
+
 

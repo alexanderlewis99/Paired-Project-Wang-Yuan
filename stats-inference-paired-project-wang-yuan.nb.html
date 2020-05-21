@@ -228,21 +228,127 @@ summary {
 
 
 <!-- rnb-text-begin -->
-<p>This is an <a href="http://rmarkdown.rstudio.com">R Markdown</a> Notebook. When you execute code within the notebook, the results appear beneath the code.</p>
-<p>Try executing this chunk by clicking the <em>Run</em> button within the chunk or by placing your cursor inside it and pressing <em>Cmd+Shift+Enter</em>.</p>
+<div id="problem-1.-derivations." class="section level2">
+<h2>Problem 1. Derivations.</h2>
+<p>Let <span class="math inline">\(X_1,\ldots,X_n\)</span> be a random sample of observed detection distances from a half-normal distribution with pdf: <span class="math inline">\(f(x)=\frac{2}{\sqrt{2\pi\sigma}}e^{-x^2/(2\sigma^2)}\)</span> for <span class="math inline">\(x\geq 0\)</span>. The expected value of <span class="math inline">\(X\)</span> is <span class="math inline">\(E(X)=\sigma\sqrt{\frac{2}{\pi}}\)</span> and the variance is <span class="math inline">\(V(X)=\sigma^2(1-2/\pi).\)</span></p>
+<p>Note that this density is simply twice the pdf of a <span class="math inline">\(N(0,\sigma^2)\)</span> density and we can obtain a half-normal random variable <span class="math inline">\(X\)</span> by taking the absolute value of <span class="math inline">\(Y\sim N(0,\sigma^2)(i.e. X=|Y|).\)</span></p>
+<div id="part-a" class="section level4">
+<h4>Part A</h4>
+<p>The day 11 MLE examples (Wednesday of week 4) gives you the MLE <span class="math inline">\(\hat\sigma_{MLE}\)</span> for <span class="math inline">\(\sigma\)</span>. The square of this MLE, <span class="math inline">\(\hat\sigma^2_{MLE}\)</span> is the MLE for <span class="math inline">\(\sigma^2\)</span>. Derive the sampling distribution of <span class="math inline">\(\hat\sigma^2_{MLE}\)</span>. (Hint: Use your probability Appendix theorems and you should end up with a Gamma!)</p>
+</div>
+<div id="part-b" class="section level4">
+<h4>Part B</h4>
+<p>Derive the MoM estimator <span class="math inline">\(\hat\sigma^2_{MoM}\)</span> for <span class="math inline">\(\sigma^2\)</span>.</p>
+</div>
+<div id="part-c" class="section level3">
+<h3>Part C</h3>
+<p>Determine whether the MLE and MoM estimators of <span class="math inline">\(\sigma^2\)</span> are unbiased. If one, or both, are biased, dervive the bias for that estimator.</p>
+<div id="part-d" class="section level4">
+<h4>Part D</h4>
+<p>Using your distribution from (a), derive an (exact) 95% confidence interval for <span class="math inline">\(\sigma^2\)</span> using the pivotal method described in chapter 7.</p>
+</div>
+</div>
+</div>
+<div id="part-2.-simuations" class="section level2">
+<h2>Part 2. Simuations</h2>
+<p>We want to determine which estimator is “better” by using simulation to help assess estimator properties (like bias and MSE) along with confidence interval properties (like coverage rate and interval length). Here is the basic simulation set up:</p>
+<div id="part-1." class="section level4">
+<h4>Part 1.</h4>
+<p>Fix a value for <span class="math inline">\(\sigma^2\)</span> and <span class="math inline">\(n\)</span>.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdChjYXJzKVxuYGBgIn0= -->
-<pre class="r"><code>plot(cars)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucGxvdChjYXJzKVxuYGBgXG5gYGAifQ== -->
+<p><code>r</code>r plot(cars)</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Add a new chunk by clicking the <em>Insert Chunk</em> button on the toolbar or by pressing <em>Cmd+Option+I</em>.</p>
-<p>When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the <em>Preview</em> button or press <em>Cmd+Shift+K</em> to preview the HTML file).</p>
-<p>The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike <em>Knit</em>, <em>Preview</em> does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.</p>
+</div>
+<div id="part-2." class="section level4">
+<h4>Part 2.</h4>
+<p>Take a sample of n half normal values using your values from (1):</p>
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueCA8LSBhYnMocm5vcm0obiwwLHNpZ21hKSkgICAjIGdlbmVyYXRpbmcgaGFsZiBub3JtYWwgcmFuZG9tIHNhbXBsZVxuYGBgIn0= -->
+<pre class="r"><code>x &lt;- abs(rnorm(n,0,sigma))   # generating half normal random sample</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="part-3" class="section level4">
+<h4>Part 3</h4>
+<p>For each sample, compute point estimates</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXN0X21sZVtpXSA8LSAjIE1MRSBmb3JtdWxhXG5lc3RfbW9tW2ldIDwtICMgTW9NIGZvcm11bGFcbmBgYCJ9 -->
+<pre class="r"><code>est_mle[i] &lt;- # MLE formula
+est_mom[i] &lt;- # MoM formula</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="part-4" class="section level4">
+<h4>Part 4</h4>
+<p>For each sample, compute the lower and upper bounds for each of three competing CI methods:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWxlX2xvd2VyW2ldIDwtICMgYmFzZWQgb24gZXhhY3QgTUxFIENJIChwYXJ0IGQpXG5tbGVfdXBwZXJbaV0gPC0gIyBiYXNlZCBvbiBleGFjdCBNTEUgQ0kgKHBhcnQgZClcbm1sZV9ib290X2xvd2VyW2ldIDwtICMgQ0kgYmFzZWQgb24gYm9vdHN0cmFwcGluZyB0aGUgTUxFXG5tbGVfYm9vdF91cHBlcltpXSA8LSBcbm1vbV9ib290X2xvd2VyW2ldIDwtICMgQ0kgYmFzZWQgb24gYm9vdHN0cmFwcGluZyB0aGUgTW9NXG5tb21fYm9vdF91cHBlcltpXSA8LVxuXG5gYGAifQ== -->
+<pre class="r"><code>mle_lower[i] &lt;- # based on exact MLE CI (part d)
+mle_upper[i] &lt;- # based on exact MLE CI (part d)
+mle_boot_lower[i] &lt;- # CI based on bootstrapping the MLE
+mle_boot_upper[i] &lt;- 
+mom_boot_lower[i] &lt;- # CI based on bootstrapping the MoM
+mom_boot_upper[i] &lt;-
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Note that you will have to create a bootstrap loop to generate the lower and upper bounds for your bootstrap CI for this one sample.</p>
+</div>
+<div id="part-5" class="section level4">
+<h4>Part 5</h4>
+<p>Repeat 2-4 many times (<code>N</code>). Try at least 10k simulations!</p>
+</div>
+<div id="part-6" class="section level4">
+<h4>Part 6</h4>
+<p>Compare your estimators in (3) to your true value of <span class="math inline">\(\sigma^2\)</span>. Simulated bias, percent bias (as a percentage of the true <span class="math inline">\(\sigma^2\)</span>) and MSE look like the following (for both MLE and MoM):</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYmlhcyA8LSBtZWFuKGVzdCkgLSBzaWdtYV4yICBcbnBlcmNfYmlhcyA8LSAxMDAqYmlhcy9zaWdtYV4yICAjIGJpYXMgYXMgYSBwZXJjZW50YWdlIG9mIHNpZ21hXjJcbm1zZSA8LSBtZWFuKChlc3QgLSBzaWdtYV4yKV4yKSAjIG1lYW4gb2Ygc3F1YXJlZCBkZXZpYXRpb25zIChlc3QgLSB0cnV0aCleMlxuYGBgIn0= -->
+<pre class="r"><code>bias &lt;- mean(est) - sigma^2  
+perc_bias &lt;- 100*bias/sigma^2  # bias as a percentage of sigma^2
+mse &lt;- mean((est - sigma^2)^2) # mean of squared deviations (est - truth)^2</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Note that you can compute the exact bias values for both estimators (part c), so your simulation bias values should be close to your exact values if your simulation size is big.</p>
+</div>
+<div id="part-7" class="section level4">
+<h4>Part 7</h4>
+<p>Compare interval estimates in (4) by looking at how often they cover the true value of <span class="math inline">\(\sigma^2\)</span> and their mean length:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY292ZXIgPC0gbWVhbigobG93ZXIgPD0gc2lnbWFeMikgJiAoc2lnbWFeMiA8PSB1cHBlcikpXG5tZWFuLmxlbmd0aCA8LSBtZWFuKHVwcGVyIC0gbG93ZXIpXG5gYGAifQ== -->
+<pre class="r"><code>cover &lt;- mean((lower &lt;= sigma^2) &amp; (sigma^2 &lt;= upper))
+mean.length &lt;- mean(upper - lower)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We would like to have a coverage rate close to 95% (because that is what we are claiming for our confidence level). If two intervals have rates of about 95%, then we would prefer the interval that is shorter in mean length.</p>
+</div>
+<div id="part-8" class="section level4">
+<h4>Part 8</h4>
+<p>Finally, some estimator properties may depend on your initial simulation values (<span class="math inline">\(n\)</span> and <span class="math inline">\(\sigma^2\)</span>). You should explore how changing these values affects your conclusions about which point and interval estimators are “best.” Note: I’ve outlined the minimal criteria for the simulation. Feel free to try other estimators of <span class="math inline">\(\sigma^2\)</span> and/or other ways of computing a 95% confidence interval.</p>
+</div>
+</div>
+<div id="estimation-for-bergen" class="section level2">
+<h2>3. Estimation for Bergen</h2>
+<p>Based on your “best” results from parts 1 and 2, provide a point and interval estimate for <span class="math inline">\(\sigma^2\)</span> using the Bergen detection distances. Also use these values to give point and interval estimates for the probability <span class="math inline">\(p_x\)</span> of detecting a mussel that is “x” meters off the transect: <span class="math inline">\(p_x=e^{-x^2/(2\sigma^2)}\)</span>. for “x” distances of 0.5 meters and 1 meter.</p>
+<p>Interesting aside: It is these detection probabilities that are then used to estimate how many mussels are in the lake. E.g. if we observe a mussel with a 0.5 probability of being detected, we can reason that there must also be one mussel (at the same distance) that we missed. Hence, this one mussel really represents two mussels in the entire population.</p>
+<!-- rnb-text-end -->
+</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCmF1dGhvcjogIkFsZWMgV2FuZyBhbmQgQWxsZW4gWXVhbiIKLS0tCgpUaGlzIGlzIGFuIFtSIE1hcmtkb3duXShodHRwOi8vcm1hcmtkb3duLnJzdHVkaW8uY29tKSBOb3RlYm9vay4gV2hlbiB5b3UgZXhlY3V0ZSBjb2RlIHdpdGhpbiB0aGUgbm90ZWJvb2ssIHRoZSByZXN1bHRzIGFwcGVhciBiZW5lYXRoIHRoZSBjb2RlLiAKClRyeSBleGVjdXRpbmcgdGhpcyBjaHVuayBieSBjbGlja2luZyB0aGUgKlJ1biogYnV0dG9uIHdpdGhpbiB0aGUgY2h1bmsgb3IgYnkgcGxhY2luZyB5b3VyIGN1cnNvciBpbnNpZGUgaXQgYW5kIHByZXNzaW5nICpDbWQrU2hpZnQrRW50ZXIqLiAKCmBgYHtyfQpwbG90KGNhcnMpCmBgYAoKQWRkIGEgbmV3IGNodW5rIGJ5IGNsaWNraW5nIHRoZSAqSW5zZXJ0IENodW5rKiBidXR0b24gb24gdGhlIHRvb2xiYXIgb3IgYnkgcHJlc3NpbmcgKkNtZCtPcHRpb24rSSouCgpXaGVuIHlvdSBzYXZlIHRoZSBub3RlYm9vaywgYW4gSFRNTCBmaWxlIGNvbnRhaW5pbmcgdGhlIGNvZGUgYW5kIG91dHB1dCB3aWxsIGJlIHNhdmVkIGFsb25nc2lkZSBpdCAoY2xpY2sgdGhlICpQcmV2aWV3KiBidXR0b24gb3IgcHJlc3MgKkNtZCtTaGlmdCtLKiB0byBwcmV2aWV3IHRoZSBIVE1MIGZpbGUpLiAKClRoZSBwcmV2aWV3IHNob3dzIHlvdSBhIHJlbmRlcmVkIEhUTUwgY29weSBvZiB0aGUgY29udGVudHMgb2YgdGhlIGVkaXRvci4gQ29uc2VxdWVudGx5LCB1bmxpa2UgKktuaXQqLCAqUHJldmlldyogZG9lcyBub3QgcnVuIGFueSBSIGNvZGUgY2h1bmtzLiBJbnN0ZWFkLCB0aGUgb3V0cHV0IG9mIHRoZSBjaHVuayB3aGVuIGl0IHdhcyBsYXN0IHJ1biBpbiB0aGUgZWRpdG9yIGlzIGRpc3BsYXllZC4KCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCmF1dGhvcjogIkFsZWMgV2FuZyBhbmQgQWxsZW4gWXVhbiIKLS0tCgojIyBQcm9ibGVtIDEuIERlcml2YXRpb25zLgpMZXQgJFhfMSxcbGRvdHMsWF9uJCBiZSBhIHJhbmRvbSBzYW1wbGUgb2Ygb2JzZXJ2ZWQgZGV0ZWN0aW9uIGRpc3RhbmNlcyBmcm9tIGEgaGFsZi1ub3JtYWwgZGlzdHJpYnV0aW9uIHdpdGggcGRmOgokZih4KT1cZnJhY3syfXtcc3FydHsyXHBpXHNpZ21hfX1lXnsteF4yLygyXHNpZ21hXjIpfSQgZm9yICR4XGdlcSAwJC4KVGhlIGV4cGVjdGVkIHZhbHVlIG9mICRYJCBpcyAkRShYKT1cc2lnbWFcc3FydHtcZnJhY3syfXtccGl9fSQgYW5kIHRoZSB2YXJpYW5jZSBpcyAkVihYKT1cc2lnbWFeMigxLTIvXHBpKS4kCgpOb3RlIHRoYXQgdGhpcyBkZW5zaXR5IGlzIHNpbXBseSB0d2ljZSB0aGUgcGRmIG9mIGEgJE4oMCxcc2lnbWFeMikkIGRlbnNpdHkgYW5kIHdlIGNhbiBvYnRhaW4gYSBoYWxmLW5vcm1hbCByYW5kb20gdmFyaWFibGUgJFgkIGJ5IHRha2luZyB0aGUgYWJzb2x1dGUgdmFsdWUgb2YgJFlcc2ltIE4oMCxcc2lnbWFeMikoaS5lLiBYPXxZfCkuJAoKIyMjIyBQYXJ0IEEKVGhlIGRheSAxMSBNTEUgZXhhbXBsZXMgKFdlZG5lc2RheSBvZiB3ZWVrIDQpIGdpdmVzIHlvdSB0aGUgTUxFICRcaGF0XHNpZ21hX3tNTEV9JCBmb3IgJFxzaWdtYSQuIFRoZSBzcXVhcmUgb2YgdGhpcyBNTEUsICRcaGF0XHNpZ21hXjJfe01MRX0kIGlzIHRoZSBNTEUgZm9yICRcc2lnbWFeMiQuIERlcml2ZSB0aGUgc2FtcGxpbmcgZGlzdHJpYnV0aW9uIG9mICRcaGF0XHNpZ21hXjJfe01MRX0kLiAoSGludDogVXNlIHlvdXIgcHJvYmFiaWxpdHkgQXBwZW5kaXggdGhlb3JlbXMgYW5kIHlvdSBzaG91bGQgZW5kIHVwIHdpdGggYSBHYW1tYSEpCgojIyMjIFBhcnQgQgpEZXJpdmUgdGhlIE1vTSBlc3RpbWF0b3IgJFxoYXRcc2lnbWFeMl97TW9NfSQgZm9yICRcc2lnbWFeMiQuCgojIyMgUGFydCBDCkRldGVybWluZSB3aGV0aGVyIHRoZSBNTEUgYW5kIE1vTSBlc3RpbWF0b3JzIG9mICRcc2lnbWFeMiQgIGFyZSB1bmJpYXNlZC4gSWYgb25lLCBvciBib3RoLCBhcmUgYmlhc2VkLCBkZXJ2aXZlIHRoZSBiaWFzIGZvciB0aGF0IGVzdGltYXRvci4KCiMjIyMgUGFydCBEClVzaW5nIHlvdXIgZGlzdHJpYnV0aW9uIGZyb20gKGEpLCBkZXJpdmUgYW4gKGV4YWN0KSA5NSUgY29uZmlkZW5jZSBpbnRlcnZhbCBmb3IgJFxzaWdtYV4yJCB1c2luZyB0aGUgcGl2b3RhbCBtZXRob2QgZGVzY3JpYmVkIGluIGNoYXB0ZXIgNy4KCiMjIFBhcnQgMi4gU2ltdWF0aW9ucwoKV2Ugd2FudCB0byBkZXRlcm1pbmUgd2hpY2ggZXN0aW1hdG9yIGlzIOKAnGJldHRlcuKAnSBieSB1c2luZyBzaW11bGF0aW9uIHRvIGhlbHAgYXNzZXNzIGVzdGltYXRvciBwcm9wZXJ0aWVzIChsaWtlIGJpYXMgYW5kIE1TRSkgYWxvbmcgd2l0aCBjb25maWRlbmNlIGludGVydmFsIHByb3BlcnRpZXMgKGxpa2UgY292ZXJhZ2UgcmF0ZSBhbmQgaW50ZXJ2YWwgbGVuZ3RoKS4gSGVyZSBpcyB0aGUgYmFzaWMgc2ltdWxhdGlvbiBzZXQgdXA6CgojIyMjIFBhcnQgMS4KRml4IGEgdmFsdWUgZm9yICRcc2lnbWFeMiQgYW5kICRuJC4KCmBgYHtyfQpuIDwtICMgc2FtcGxlIHNpemUKc2lnbWEgPC0gIyB2YWx1ZSBvZiBzaWdtYQpgYGAKCiMjIyMgUGFydCAyLgpUYWtlIGEgc2FtcGxlIG9mIG4gaGFsZiBub3JtYWwgdmFsdWVzIHVzaW5nIHlvdXIgdmFsdWVzIGZyb20gKDEpOgpgYGB7Un0KeCA8LSBhYnMocm5vcm0obiwwLHNpZ21hKSkgICAjIGdlbmVyYXRpbmcgaGFsZiBub3JtYWwgcmFuZG9tIHNhbXBsZQpgYGAKCiMjIyMgUGFydCAzCkZvciBlYWNoIHNhbXBsZSwgY29tcHV0ZSBwb2ludCBlc3RpbWF0ZXMKCmBgYHtSfQplc3RfbWxlW2ldIDwtICMgTUxFIGZvcm11bGEKZXN0X21vbVtpXSA8LSAjIE1vTSBmb3JtdWxhCmBgYAoKIyMjIyBQYXJ0IDQKRm9yIGVhY2ggc2FtcGxlLCBjb21wdXRlIHRoZSBsb3dlciBhbmQgdXBwZXIgYm91bmRzIGZvciBlYWNoIG9mIHRocmVlIGNvbXBldGluZyBDSSBtZXRob2RzOgpgYGB7Un0KbWxlX2xvd2VyW2ldIDwtICMgYmFzZWQgb24gZXhhY3QgTUxFIENJIChwYXJ0IGQpCm1sZV91cHBlcltpXSA8LSAjIGJhc2VkIG9uIGV4YWN0IE1MRSBDSSAocGFydCBkKQptbGVfYm9vdF9sb3dlcltpXSA8LSAjIENJIGJhc2VkIG9uIGJvb3RzdHJhcHBpbmcgdGhlIE1MRQptbGVfYm9vdF91cHBlcltpXSA8LSAKbW9tX2Jvb3RfbG93ZXJbaV0gPC0gIyBDSSBiYXNlZCBvbiBib290c3RyYXBwaW5nIHRoZSBNb00KbW9tX2Jvb3RfdXBwZXJbaV0gPC0KCmBgYApOb3RlIHRoYXQgeW91IHdpbGwgaGF2ZSB0byBjcmVhdGUgYSBib290c3RyYXAgbG9vcCB0byBnZW5lcmF0ZSB0aGUgbG93ZXIgYW5kIHVwcGVyIGJvdW5kcyBmb3IgeW91ciBib290c3RyYXAgQ0kgZm9yIHRoaXMgb25lIHNhbXBsZS4KCgoKIyMjIyBQYXJ0IDUKUmVwZWF0IDItNCBtYW55IHRpbWVzIChgTmApLiBUcnkgYXQgbGVhc3QgMTBrIHNpbXVsYXRpb25zIQoKIyMjIyBQYXJ0IDYKQ29tcGFyZSB5b3VyIGVzdGltYXRvcnMgaW4gKDMpIHRvIHlvdXIgdHJ1ZSB2YWx1ZSBvZiAkXHNpZ21hXjIkLiBTaW11bGF0ZWQgYmlhcywgcGVyY2VudCBiaWFzIChhcyBhIHBlcmNlbnRhZ2Ugb2YgdGhlIHRydWUgJFxzaWdtYV4yJCkgYW5kIE1TRSBsb29rIGxpa2UgdGhlIGZvbGxvd2luZyAoZm9yIGJvdGggTUxFIGFuZCBNb00pOgoKYGBge1J9CmJpYXMgPC0gbWVhbihlc3QpIC0gc2lnbWFeMiAgCnBlcmNfYmlhcyA8LSAxMDAqYmlhcy9zaWdtYV4yICAjIGJpYXMgYXMgYSBwZXJjZW50YWdlIG9mIHNpZ21hXjIKbXNlIDwtIG1lYW4oKGVzdCAtIHNpZ21hXjIpXjIpICMgbWVhbiBvZiBzcXVhcmVkIGRldmlhdGlvbnMgKGVzdCAtIHRydXRoKV4yCmBgYApOb3RlIHRoYXQgeW91IGNhbiBjb21wdXRlIHRoZSBleGFjdCBiaWFzIHZhbHVlcyBmb3IgYm90aCBlc3RpbWF0b3JzIChwYXJ0IGMpLCBzbyB5b3VyIHNpbXVsYXRpb24gYmlhcyB2YWx1ZXMgc2hvdWxkIGJlIGNsb3NlIHRvIHlvdXIgZXhhY3QgdmFsdWVzIGlmIHlvdXIgc2ltdWxhdGlvbiBzaXplIGlzIGJpZy4KCiMjIyMgUGFydCA3CkNvbXBhcmUgaW50ZXJ2YWwgZXN0aW1hdGVzIGluICg0KSBieSBsb29raW5nIGF0IGhvdyBvZnRlbiB0aGV5IGNvdmVyIHRoZSB0cnVlIHZhbHVlIG9mICRcc2lnbWFeMiQgYW5kIHRoZWlyIG1lYW4gbGVuZ3RoOgpgYGB7Un0KY292ZXIgPC0gbWVhbigobG93ZXIgPD0gc2lnbWFeMikgJiAoc2lnbWFeMiA8PSB1cHBlcikpCm1lYW4ubGVuZ3RoIDwtIG1lYW4odXBwZXIgLSBsb3dlcikKYGBgCldlIHdvdWxkIGxpa2UgdG8gaGF2ZSBhIGNvdmVyYWdlIHJhdGUgY2xvc2UgdG8gOTUlIChiZWNhdXNlIHRoYXQgaXMgd2hhdCB3ZSBhcmUgY2xhaW1pbmcgZm9yIG91ciBjb25maWRlbmNlIGxldmVsKS4gSWYgdHdvIGludGVydmFscyBoYXZlIHJhdGVzIG9mIGFib3V0IDk1JSwgdGhlbiB3ZSB3b3VsZCBwcmVmZXIgdGhlIGludGVydmFsIHRoYXQgaXMgc2hvcnRlciBpbiBtZWFuIGxlbmd0aC4KCiMjIyMgUGFydCA4CkZpbmFsbHksIHNvbWUgZXN0aW1hdG9yIHByb3BlcnRpZXMgbWF5IGRlcGVuZCBvbiB5b3VyIGluaXRpYWwgc2ltdWxhdGlvbiB2YWx1ZXMgKCRuJCBhbmQgJFxzaWdtYV4yJCkuIFlvdSBzaG91bGQgZXhwbG9yZSBob3cgY2hhbmdpbmcgdGhlc2UgdmFsdWVzIGFmZmVjdHMgeW91ciBjb25jbHVzaW9ucyBhYm91dCB3aGljaCBwb2ludCBhbmQgaW50ZXJ2YWwgZXN0aW1hdG9ycyBhcmUg4oCcYmVzdC7igJ0KTm90ZTogSeKAmXZlIG91dGxpbmVkIHRoZSBtaW5pbWFsIGNyaXRlcmlhIGZvciB0aGUgc2ltdWxhdGlvbi4gRmVlbCBmcmVlIHRvIHRyeSBvdGhlciBlc3RpbWF0b3JzIG9mICRcc2lnbWFeMiQgYW5kL29yIG90aGVyIHdheXMgb2YgY29tcHV0aW5nIGEgOTUlIGNvbmZpZGVuY2UgaW50ZXJ2YWwuCgojIyAzLiBFc3RpbWF0aW9uIGZvciBCZXJnZW4KCkJhc2VkIG9uIHlvdXIg4oCcYmVzdOKAnSByZXN1bHRzIGZyb20gcGFydHMgMSBhbmQgMiwgcHJvdmlkZSBhIHBvaW50IGFuZCBpbnRlcnZhbCBlc3RpbWF0ZSBmb3IgJFxzaWdtYV4yJCB1c2luZyB0aGUgQmVyZ2VuIGRldGVjdGlvbiBkaXN0YW5jZXMuIEFsc28gdXNlIHRoZXNlIHZhbHVlcyB0byBnaXZlIHBvaW50IGFuZCBpbnRlcnZhbCBlc3RpbWF0ZXMgZm9yIHRoZSBwcm9iYWJpbGl0eSAkcF94JCBvZiBkZXRlY3RpbmcgYSBtdXNzZWwgdGhhdCBpcyDigJx44oCdIG1ldGVycyBvZmYgdGhlIHRyYW5zZWN0OiAkcF94PWVeey14XjIvKDJcc2lnbWFeMil9JC4KZm9yIOKAnHjigJ0gZGlzdGFuY2VzIG9mIDAuNSBtZXRlcnMgYW5kIDEgbWV0ZXIuCgpJbnRlcmVzdGluZyBhc2lkZTogSXQgaXMgdGhlc2UgZGV0ZWN0aW9uIHByb2JhYmlsaXRpZXMgdGhhdCBhcmUgdGhlbiB1c2VkIHRvIGVzdGltYXRlIGhvdyBtYW55IG11c3NlbHMgYXJlIGluIHRoZSBsYWtlLiBFLmcuIGlmIHdlIG9ic2VydmUgYSBtdXNzZWwgd2l0aCBhIDAuNSBwcm9iYWJpbGl0eSBvZiBiZWluZyBkZXRlY3RlZCwgd2UgY2FuIHJlYXNvbiB0aGF0IHRoZXJlIG11c3QgYWxzbyBiZSBvbmUgbXVzc2VsIChhdCB0aGUgc2FtZSBkaXN0YW5jZSkgdGhhdCB3ZSBtaXNzZWQuIEhlbmNlLCB0aGlzIG9uZSBtdXNzZWwgcmVhbGx5IHJlcHJlc2VudHMgdHdvIG11c3NlbHMgaW4gdGhlIGVudGlyZSBwb3B1bGF0aW9uLgoKCgo=</div>
 
 
 
