@@ -14,35 +14,49 @@ Note that this density is simply twice the pdf of a $N(0,\sigma^2)$ density and 
 #### Part A
 The day 11 MLE examples (Wednesday of week 4) gives you the MLE $\hat\sigma_{MLE}$ for $\sigma$. The square of this MLE, $\hat\sigma^2_{MLE}$ is the MLE for $\sigma^2$. Derive the sampling distribution of $\hat\sigma^2_{MLE}$. (Hint: Use your probability Appendix theorems and you should end up with a Gamma!)
 
-From the MLE examples, we have that $\hat\sigma_{MLE} = \sqrt{\frac{\sum ^2_i}{n}}$.
-
-Therefore $\hat\sigma_{MLE}^2= \frac{\sum X^2_i}{n}$.
-
-We have the $x_i \sim N(0, \sigma^2)$.
+From the MLE examples, we have that $\hat\sigma_{MLE}^2= \frac{\sum X^2_i}{n}$ with $X_i \sim N(0, \sigma^2)$.
 
 Therefore $X_i = Z_i \times\sigma$ with $Z \sim N(0, 1)$.
 
 So $\hat\sigma_{MLE}^2=\frac{\sum (Z_i \times\sigma)^2}{n}$
 
-$=\frac{\sum Z_i^2 \times\sigma^2}{n}$
+$=\frac{\sum_{i=1}^n Z_i^2 \times\sigma^2}{n}$
 
-$=n\sigma^2\frac{\sum Z_i^2}{n}$
+$=n\sigma^2\frac{\sum_{i=1}^n Z_i^2}{n}$
 
-$=\sigma^2\sum Z_i^2$.
+$=\sigma^2\sum_{i=1}^n Z_i^2$.
 
-Now, by Theorem B.10.4, since $Z_1,Z_2,\ldots,Z_k$ are independent random variables from the standard normal distribution, $\sum{i=1}{n} Z_i^2$ has a $\chi^2$ distribution with $n$ degrees of freedom.
+Now, by Theorem B.10.4, since $Z_1,Z_2,\ldots,Z_k$ are independent random variables from the standard normal distribution, $\sum_{i=1}^{n} Z_i^2$ has a $\chi^2$ distribution with $n$ degrees of freedom.
 
 Therefore $\hat\sigma_{MLE}^2=\sigma^2\times\chi^2_n$.
 
-Since the chi-square distribution with $n$degress of freedom is equal to the gamma distribution with $r=\frac{n}{2}$ and $\lambda=\frac{1}{2}$, then $\hat\sigma_{MLE}^2=\sigma^2\times Y$ with $Y\sim Gamma(\frac{n}{2},\frac{1}{2})$.
+Since the Chi-Square distribution with $n$ degress of freedom is a Gamma distribution with $r=\frac{n}{2}$ and $\lambda=\frac{1}{2}$, then $\hat\sigma_{MLE}^2=\sigma^2\times Y$ with $Y\sim Gamma(\frac{n}{2},\frac{1}{2})$.
 
 By Proposition B.9.3, $\hat\sigma_{MLE}^2\sim Gamma(\frac{n}{2},\frac{1}{2\sigma^2})$.
 
 #### Part B
 Derive the MoM estimator $\hat\sigma^2_{MoM}$ for $\sigma^2$.
 
+The first theorietcal moment of $X$ is $E(X)=\sigma\sqrt{\frac{2}{\pi}}$.
+
+The first sample moment of $X$ is $\sum_{i=1}^n x_i=\bar X.$
+
+So, using the methods of moments, we have $\bar X = \sigma\sqrt{\frac{2}{\pi}}$
+
+$\implies \sigma_{MoM} = \bar X/\sqrt{\frac{2}{\pi}} =  \bar X\sqrt{\frac{\pi}{2}}$
+
+$\implies \sigma_{MoM}^2 = \frac{\pi}{2}\bar X^2$.
+
 #### Part C
 Determine whether the MLE and MoM estimators of $\sigma^2$  are unbiased. If one, or both, are biased, dervive the bias for that estimator.
+
+Since we proved that $\hat\sigma^2_{MLE}$ is distributed by the Gamma distribution, then  $E[\hat\sigma^2_{MLE}]=r/\lambda=(n/2)/(1/(2\sigma^2))=2\sigma^2n/2=\sigma^2n.$ 
+
+$Bias[\hat\sigma^2_{MLE}] = E[\hat\sigma^2_{MLE}] - \sigma^2$
+
+$=\sigma^2n-\sigma^2$
+
+$=(n-1)\sigma^2$.
 
 #### Part D
 Using your distribution from (a), derive an (exact) 95% confidence interval for $\sigma^2$ using the pivotal method described in chapter 7.
