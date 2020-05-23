@@ -59,7 +59,13 @@ $=\sigma^2n-\sigma^2$
 $=(n-1)\sigma^2$.
 
 #### Part D
-Using your distribution from (a), derive an (exact) 95% confidence interval for $\sigma^2$ using the pivotal method described in chapter 7.
+Using your distribution from (a), derive an (exact) 95% confidence interval for $\sigma^2$ using the pivotal method described in chapter 7. 
+Let$X_1,\ldots,X_n$ be a random sample of observed detection distances from a half-normal distribution. From part a we found the distribution $\hat\sigma_{MLE}^2\sim Gamma(\frac{n}{2},\frac{1}{2\sigma^2})$.
+It is gamma distribution with parameters $\frac{n}{2}$ and $\lambda = \frac{1}{2\sigma^2}$ by theorem B9.4, it proves that the gamma distribution does not depend of the $\lambda = \frac{1}{2\sigma^2}$ so $\lambda = \frac{1}{2\sigma^2}$ is a pivot.
+For a 95 percent  confidence interval $0.95 = P(\frac{q_{1}}{\bar x}\leq \lambda \leq \frac{q_{2}}{\bar x}) $
+= $P(\frac{q_{1}}{\bar x}\leq \frac{1}{2\sigma^2} \leq \frac{q_{2}}{\bar x}) $
+=$P(\frac{q_{2}}{2\bar x}\leq \sigma^{2} \leq \frac{q_{1}}{2\bar x})$
+= $P(\frac{q_{0.975}}{2\bar x}\leq \sigma^{2} \leq \frac{q_{0.025}}{2\bar x})$
 
 ## Part 2. Simuations
 We want to determine which estimator is “better” by using simulation to help assess estimator properties (like bias and MSE) along with confidence interval properties (like coverage rate and interval length). Here is the basic simulation set up:
