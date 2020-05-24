@@ -58,6 +58,8 @@ $=\sigma^2n-\sigma^2$
 
 $=(n-1)\sigma^2$.
 
+$Bias[\hat\sigma^2_{MoM}] = E[\hat\sigma^2_{MoM}] - \sigma^2$
+$=\frac{\pi}{2}\times \sigma^2 \times \frac{2}{\pi}-\sigma^2  = 0$
 #### Part D
 Using your distribution from (a), derive an (exact) 95% confidence interval for $\sigma^2$ using the pivotal method described in chapter 7.
 Let$X_1,\ldots,X_n$ be a random sample of observed detection distances from a half-normal distribution. From part a we found the distribution $\hat\sigma_{MLE}^2\sim Gamma(\frac{n}{2},\frac{1}{2\sigma^2})$.
