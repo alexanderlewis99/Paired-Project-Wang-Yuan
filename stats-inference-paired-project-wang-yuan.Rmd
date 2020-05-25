@@ -158,6 +158,59 @@ Note that you will have to create a bootstrap loop to generate the lower and upp
 #### Part 5
 Repeat 2-4 many times (`N`). Try at least 10k simulations!
 
+```{R}
+set.seed(0)
+K <- 10^2
+est_mle <- c()
+est_mom <- c()
+mle_lower <- c()
+mle_upper <- c()
+mle_boot_lower <- c()
+mle_boot_upper <- c()
+mom_boot_lower <- c()
+mom_boot_upper <- c()
+for(i in 1:K){
+  x <- abs(rnorm(n,0,sigma))   # generating half normal random sample
+  est_mle[i] <- sum(x^2)/n # MLE formula
+  est_mom[i] <- mean(x)^2*pi/2 # MoM formula
+  
+  q_0.975 <- qgamma(0.975,shape = n/2, 1/(2*sigma^2))
+  q_0.025 <- qgamma(0.025,shape = n/2, 1/(2*sigma^2))
+  
+  # based on exact MLE CI (part d)
+  x_bar <- mean(x)
+  mle_lower[i] <- x_bar/(2*q_0.975)
+  # based on exact MLE CI (part d)
+  mle_upper[i] <- x_bar/(2*q_0.025)
+  # CI based on bootstrapping the MLE
+  set.seed(0)
+  N <- 10^4
+  my.boot.MLE <- numeric(N)
+  my.boot.MoM <- numeric(N)
+  for(j in 1:N)
+  {
+    s <- sample(x, 100, replace = TRUE) # draw resamples
+    my.boot.MLE[j] <- sum(s^2)/n # compute MLE variance, store in my.boot
+    my.boot.MoM[j] <- mean(s)^2*pi/2 # compute MoM variance, store in my.boot
+  }
+  mle_boot_lower[i] <- quantile(my.boot.MLE, c(0.025))
+  mle_boot_upper[i] <- quantile(my.boot.MLE, c(0.975))
+  
+  # CI based on bootstrapping the MoM
+  mom_boot_lower[i] <- quantile(my.boot.MoM, c(0.025))
+  mom_boot_upper[i] <- quantile(my.boot.MoM, c(0.975))
+  print(i)
+}
+mean(est_mle)
+mean(est_mom)
+mean(mle_lower)
+mean(mle_upper)
+mean(mle_boot_lower)
+mean(mle_boot_upper)
+mean(mom_boot_lower)
+mean(mom_boot_upper)
+```
+
 #### Part 6
 Compare your estimators in (3) to your true value of $\sigma^2$. Simulated bias, percent bias (as a percentage of the true $\sigma^2$) and MSE look like the following (for both MLE and MoM):
 
