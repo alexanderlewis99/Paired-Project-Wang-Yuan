@@ -37,7 +37,7 @@ By Proposition B.9.3, $\hat\sigma_{MLE}^2\sim Gamma(\frac{n}{2},\frac{1}{2\sigma
 #### Part B
 Derive the MoM estimator $\hat\sigma^2_{MoM}$ for $\sigma^2$.
 
-The first theorietcal moment of $X$ is $E(X)=\sigma\sqrt{\frac{2}{\pi}}$.
+The first theoretical moment of $X$ is $E(X)=\sigma\sqrt{\frac{2}{\pi}}$.
 
 The first sample moment of $X$ is $\sum_{i=1}^n x_i=\bar X.$
 
@@ -58,26 +58,48 @@ $=\sigma^2n-\sigma^2$
 
 $=(n-1)\sigma^2$.
 
+Thus, we see that $\hat\sigma^2_{MLE}$ is a biased estimator.
+
 $Bias[\hat\sigma^2_{MoM}] = E[\hat\sigma^2_{MoM}] - \sigma^2$
-$=\frac{\pi}{2}\times \sigma^2 \times \frac{2}{\pi}-\sigma^2  = 0$
+
+$=\frac{\pi}{2}\bar X^2 -\sigma^2$.
+
+Since $\bar X = E(X)=\sigma\sqrt{\frac{2}{\pi}}$, then
+
+$Bias[\hat\sigma^2_{MoM}] =\frac{\pi}{2}\times \sigma^2 \times \frac{2}{\pi}-\sigma^2$
+
+$= 0.$
+
+Thus, we see that $\hat\sigma^2_{MoM}$ is an unbiased estimator.
+
 #### Part D
 Using your distribution from (a), derive an (exact) 95% confidence interval for $\sigma^2$ using the pivotal method described in chapter 7.
-Let$X_1,\ldots,X_n$ be a random sample of observed detection distances from a half-normal distribution. From part a we found the distribution $\hat\sigma_{MLE}^2\sim Gamma(\frac{n}{2},\frac{1}{2\sigma^2})$.
-It is gamma distribution with parameters $\frac{n}{2}$ and $\lambda = \frac{1}{2\sigma^2}$ by theorem B9.4, it proves that the gamma distribution does not depend of the $\lambda = \frac{1}{2\sigma^2}$ so $\lambda = \frac{1}{2\sigma^2}$ is a pivot. 
-For a 95 percent  confidence interval $0.95 = P(\frac{q_{1}}{\bar x}\leq \lambda \leq \frac{q_{2}}{\bar x}) $
-= $P(\frac{q_{1}}{\bar x}\leq \frac{1}{2\sigma^2} \leq \frac{q_{2}}{\bar x}) $ 
-=$P(\frac{q_{2}}{2\bar x}\leq \sigma^{2} \leq \frac{q_{1}}{2\bar x})$ 
-= $P(\frac{q_{0.975}}{2\bar x}\leq \sigma^{2} \leq \frac{q_{0.025}}{2\bar x})$
+Let $X_1,\ldots,X_n$ be a random sample of observed detection distances from a half-normal distribution. From part A we found the distribution $\hat\sigma_{MLE}^2\sim Gamma(\frac{n}{2},\frac{1}{2\sigma^2})$.
+
+It is Gamma distribution with parameters $\frac{n}{2}$ and $\lambda = \frac{1}{2\sigma^2}$.
+
+By Theorem B.9.4, it proves that the Gamma distribution does not depend of the $\lambda = \frac{1}{2\sigma^2}$ so $\lambda = \frac{1}{2\sigma^2}$ is a pivot. 
+
+For a 95 percent confidence interval $0.95 = P(\frac{q_{0.025}}{\bar x}\leq \lambda \leq \frac{q_{0.975}}{\bar x})$
+
+$= P(\frac{q_{0.025}}{\bar x}\leq \frac{1}{2\sigma^2} \leq \frac{q_{0.975}}{\bar x})$ 
+
+$= P(\frac{2q_{0.025}}{\bar x}\leq \frac{1}{\sigma^2} \leq \frac{2q_{0.975}}{\bar x})$ 
+
+$= P(\frac{\bar x}{2q_{0.025}}\geq \frac{1}{\sigma^2} \geq \frac{\bar x}{2q_{0.975}})$ 
+
+$= P(\frac{\bar x}{2q_{0.975}}\leq \frac{1}{\sigma^2} \leq \frac{\bar x}{2q_{0.025}})$ 
+
+Thus our interval is $(\frac{\bar x}{2q_{0.975}}, \frac{\bar x}{2q_{0.025}})$ where $q_{0.975}$ and $q_{0.025}$ come from the Gamma distribution with $r = n/2$ and $\lambda = \frac{1}{2\sigma^2}$.
 
 ## Part 2. Simuations
-We want to determine which estimator is “better” by using simulation to help assess estimator properties (like bias and MSE) along with confidence interval properties (like coverage rate and interval length). Here is the basic simulation set up:
+We want to determine which estimator is “better” by using simulation to help assess estimator properties (like Bias and MSE) along with confidence interval properties (like coverage rate and interval length). Here is the basic simulation set up:
 
 #### Part 1.
 Fix a value for $\sigma^2$ and $n$.
-
 ```{r}
-n <- # sample size
-sigma <- # value of sigma
+n <- 100 # sample size
+sigma <- 0.05 # value of sigma
 ```
 
 #### Part 2.
@@ -88,26 +110,50 @@ x <- abs(rnorm(n,0,sigma))   # generating half normal random sample
 
 #### Part 3
 For each sample, compute point estimates
-
+We found that $\hat\sigma_{MLE}^2= \frac{\sum X^2_i}{n}$ with $X_i \sim N(0, \sigma^2)$ and $\sigma_{MoM}^2 = \frac{\pi}{2}\bar X^2$.
 ```{R}
-est_mle[i] <- # MLE formula
-est_mom[i] <- # MoM formula
+est_mle <- list()
+est_mom <- list()
+i <- 1
+est_mle[i] <- sum(x^2)/n # MLE formula
+est_mom[i] <- mean(x)^2*pi/2 # MoM formula
 ```
 
 #### Part 4
 For each sample, compute the lower and upper bounds for each of three competing CI methods:
+We found that for MLE 95% confidence interval is $(\frac{\bar x}{2q_{0.975}}, \frac{\bar x}{2q_{0.025}})$ where $q_{0.975}$ and $q_{0.025}$ come from the Gamma distribution with $r = n/2$ and $\lambda = \frac{1}{2\sigma^2}$.
 ```{R}
-mle_lower[i] <- # based on exact MLE CI (part d)
-mle_upper[i] <- # based on exact MLE CI (part d)
-mle_boot_lower[i] <- # CI based on bootstrapping the MLE
-mle_boot_upper[i] <- 
-mom_boot_lower[i] <- # CI based on bootstrapping the MoM
-mom_boot_upper[i] <-
+q_0.975 <- qgamma(0.975,shape = n/2, 1/(2*sigma^2))
+q_0.025 <- qgamma(0.025,shape = n/2, 1/(2*sigma^2))
 
+# based on exact MLE CI (part d)
+x_bar <- mean(x)
+mle_lower[i] <- x_bar/(2*q_0.975)
+# based on exact MLE CI (part d)
+mle_upper[i] <- x_bar/(2*q_0.025)
+# CI based on bootstrapping the MLE
+
+set.seed(0)
+N <- 10^5
+my.boot.MLE <- numeric(N)
+my.boot.MoM <- numeric(N)
+for(j in 1:N)
+{
+  s <- sample(x, 100, replace = TRUE) # draw resamples
+  my.boot.MLE[j] <- sum(s^2)/n # compute MLE variance, store in my.boot
+  my.boot.MoM[j] <- mean(s)^2*pi/2 # compute MoM variance, store in my.boot
+}
+mle_boot_lower <- list()
+mle_boot_upper <- list()
+mle_boot_lower[i] <- quantile(my.boot.MLE, c(0.025))
+mle_boot_upper[i] <- quantile(my.boot.MLE, c(0.975))
+# CI based on bootstrapping the MoM
+mom_boot_lower <- list()
+mom_boot_upper <- list()
+mom_boot_lower[i] <- quantile(my.boot.MoM, c(0.025))
+mom_boot_upper[i] <- quantile(my.boot.MoM, c(0.975))
 ```
 Note that you will have to create a bootstrap loop to generate the lower and upper bounds for your bootstrap CI for this one sample.
-
-
 
 #### Part 5
 Repeat 2-4 many times (`N`). Try at least 10k simulations!
