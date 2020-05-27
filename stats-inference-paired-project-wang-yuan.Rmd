@@ -121,16 +121,16 @@ est_mom[i] <- mean(x)^2*pi/2 # MoM formula
 
 #### Part 4
 For each sample, compute the lower and upper bounds for each of three competing CI methods:
-We found that for MLE 95% confidence interval is $(\frac{\bar x}{2q_{0.975}}, \frac{\bar x}{2q_{0.025}})$ where $q_{0.975}$ and $q_{0.025}$ come from the Gamma distribution with $r = n/2$ and $\lambda = \frac{1}{2\sigma^2}$.
+We found that for MLE 95% confidence interval is $(\frac{\sum_{i=1}^{n} X^2}{q_{0.975}}, \frac{\sum_{i=1}^{n} X^2}{2q_{0.025}})$ where $q_{0.975}$ and $q_{0.025}$ come from the Gamma distribution with $r = n/2$ and $\lambda = \frac{1}{2}$.
 ```{R}
-q_0.975 <- qgamma(0.975,shape = n/2, 1/(2*sigma^2))
-q_0.025 <- qgamma(0.025,shape = n/2, 1/(2*sigma^2))
+q_0.975 <- qgamma(0.975,shape = n/2, 1/2))
+q_0.025 <- qgamma(0.025,shape = n/2, 1/2)
 
 # based on exact MLE CI (part d)
-x_bar <- mean(x)
-mle_lower[i] <- x_bar/(2*q_0.975)
+X^2 <- mean(x)
+mle_lower[i] <- \sum_{i=1}^{n} X^2/(q_0.975)
 # based on exact MLE CI (part d)
-mle_upper[i] <- x_bar/(2*q_0.025)
+mle_upper[i] <- \sum_{i=1}^{n} X^2/(q_0.025)
 # CI based on bootstrapping the MLE
 
 set.seed(0)
