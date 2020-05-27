@@ -76,21 +76,21 @@ Thus, we see that $\hat\sigma^2_{MoM}$ is an unbiased estimator.
 Using your distribution from (a), derive an (exact) 95% confidence interval for $\sigma^2$ using the pivotal method described in chapter 7.
 Let $X_1,\ldots,X_n$ be a random sample of observed detection distances from a half-normal distribution. From part A we found the distribution $\hat\sigma_{MLE}^2\sim Gamma(\frac{n}{2},\frac{1}{2\sigma^2})$.
 
-It is Gamma distribution with parameters $\frac{n}{2}$ and $\lambda = \frac{1}{2\sigma^2}$.
+It is Gamma distribution with parameters $\frac{n}{2}$ and $\lambda = \frac{n}{2\sigma^2}$.
 
-By Theorem B.9.4, it proves that the Gamma distribution does not depend of the $\lambda = \frac{1}{2\sigma^2}$ so $\lambda = \frac{1}{2\sigma^2}$ is a pivot. 
+rescaled to $ \frac{n\sigma^2}{\sigma^2}  \sim Gamma(\frac{n}{2},\frac{1}{2})$
 
-For a 95 percent confidence interval $0.95 = P(\frac{q_{0.025}}{\bar x}\leq \lambda \leq \frac{q_{0.975}}{\bar x})$
+By Theorem B.9.4,  $ \frac{n\sigma^2}{\sigma^2}  \sim Gamma(\frac{n}{2},\frac{1}{2})$ is pivotal. 
 
-$= P(\frac{q_{0.025}}{\bar x}\leq \frac{1}{2\sigma^2} \leq \frac{q_{0.975}}{\bar x})$ 
+For a 95 percent confidence interval $0.95 = P(q_{0.025}\leq \frac{\sum_{i=1}^{n} X^2}{\sigma^2} \leq q_{0.975})$
 
-$= P(\frac{2q_{0.025}}{\bar x}\leq \frac{1}{\sigma^2} \leq \frac{2q_{0.975}}{\bar x})$ 
+$= P(\frac{q_{0.025}}{\sum_{i=1}^{n} X^2}\leq \frac{1}{\sigma^2} \leq \frac{q_{0.975}}{\sum_{i=1}^{n} X^2})$ 
 
-$= P(\frac{\bar x}{2q_{0.025}}\geq \frac{1}{\sigma^2} \geq \frac{\bar x}{2q_{0.975}})$ 
+$= P(\frac{\sum_{i=1}^{n} X^2}{q_{0.025}}\geq \frac{1}{\sigma^2} \geq \frac{\sum_{i=1}^{n} X^2{q_{0.975}})$ 
 
-$= P(\frac{\bar x}{2q_{0.975}}\leq \frac{1}{\sigma^2} \leq \frac{\bar x}{2q_{0.025}})$ 
+$= P(\frac{\sum_{i=1}^{n} X^2}{q_{0.975}}\leq \sigma^2 \leq \frac{\sum_{i=1}^{n} X^2}{q_{0.025}})$ 
 
-Thus our interval is $(\frac{\bar x}{2q_{0.975}}, \frac{\bar x}{2q_{0.025}})$ where $q_{0.975}$ and $q_{0.025}$ come from the Gamma distribution with $r = n/2$ and $\lambda = \frac{1}{2\sigma^2}$.
+Thus our interval is $(\frac{\sum_{i=1}^{n} X^2}{q_{0.975}},\frac{\sum_{i=1}^{n} X^2}{q_{0.025}})$ where $q_{0.975}$ and $q_{0.025}$ come from the Gamma distribution with $r = n/2$ and $\lambda = \frac{1}{2}$.
 
 ## Part 2. Simuations
 We want to determine which estimator is “better” by using simulation to help assess estimator properties (like Bias and MSE) along with confidence interval properties (like coverage rate and interval length). Here is the basic simulation set up:
