@@ -293,6 +293,12 @@ mle.cover does not cover $\sigma^2.$ mle_boot.cover and mom_boot.cover both cove
 Finally, some estimator properties may depend on your initial simulation values ($n$ and $\sigma^2$). You should explore how changing these values affects your conclusions about which point and interval estimators are “best.”
 Note: I’ve outlined the minimal criteria for the simulation. Feel free to try other estimators of $\sigma^2$ and/or other ways of computing a 95% confidence interval.
 
+Based on the results, it seems that the larger the n and the smaller the sigma, the better estimator we get. Overall the change in n and sigma does not change the conclusion of  mle.cover does not cover the true value of 2. But mle_boot.cover and mom_boot.cover both cover the true value. 
+A good n value would be around 1000 or larger and a good sigma value would be 0.01
+Using 0.001 as sigma and 1,000 as n  we get a bias of almost 0 and an mse of almost 0.
+This is the same for 0.001 and 10,000.
+The mle.boot. always has the shortest length and covers the true value of 2. 
+
 ## 3. Estimation for Bergen
 
 Based on your “best” results from parts 1 and 2, provide a point and interval estimate for $\sigma^2$ using the Bergen detection distances. Also use these values to give point and interval estimates for the probability $p_x$ of detecting a mussel that is “x” meters off the transect: $p_x=e^{-x^2/(2\sigma^2)}$.
