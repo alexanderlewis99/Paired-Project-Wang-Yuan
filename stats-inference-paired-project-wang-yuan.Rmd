@@ -318,4 +318,8 @@ The small bias and MSE mean that at these values of n and $\sigma^2$, the estima
 Based on your “best” results from parts 1 and 2, provide a point and interval estimate for $\sigma^2$ using the Bergen detection distances. Also use these values to give point and interval estimates for the probability $p_x$ of detecting a mussel that is “x” meters off the transect: $p_x=e^{-x^2/(2\sigma^2)}$.
 for “x” distances of 0.5 meters and 1 meter.
 
-Interesting aside: It is these detection probabilities that are then used to estimate how many mussels are in the lake. E.g. if we observe a mussel with a 0.5 probability of being detected, we can reason that there must also be one mussel (at the same distance) that we missed. Hence, this one mussel really represents two mussels in the entire population.
+with $\sigma^2$ = 0.001
+$p_0.5=e^{-(0.5)^2/(2*0.001)}$ = $p_0.5=e^{-0.25/(0.002)}$ = $p_0.5=e^{-125}$ = 5.1664206e-55
+
+
+$p_1=e^{-(1)^2/(2*0.001)}$ = $p_1=e^{-1/0.002}$ =$p_1=e^{-500}$ = 7.124576e-218
