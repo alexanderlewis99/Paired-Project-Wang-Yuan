@@ -1,0 +1,348 @@
+---
+title: "R Notebook Appendix"
+output: html_notebook
+author: "Alec Wang and Allen Yuan"
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Functions for Simulation Experiment
+
+### Estimator Simulation Functions
+
+```{R}
+runSimulation <- function(n, sigma, K){
+  set.seed(0)
+  est_mle <- c()
+  est_mom <- c()
+  mle_lower <- c()
+  mle_upper <- c()
+  mle_boot_lower <- c()
+  mle_boot_upper <- c()
+  mom_boot_lower <- c()
+  mom_boot_upper <- c()
+  for(i in 1:K){
+    x <- abs(rnorm(n,0,sigma))   # generating half normal random sample
+    est_mle[i] <- sum(x^2)/n # MLE formula
+    est_mom[i] <- mean(x)^2*pi/2 # MoM formula
+    
+    q_0.975 <- qgamma(0.975,shape = n/2, 1/(2*sigma^2))
+    q_0.025 <- qgamma(0.025,shape = n/2, 1/(2*sigma^2))
+    
+    # based on exact MLE CI (part d)
+    mle_lower[i] <- sum(x^2)/(q_0.975)
+    # based on exact MLE CI (part d)
+    mle_upper[i] <- sum(x^2)/(q_0.025)
+    
+    # CI based on bootstrapping the MLE
+    N <- 10^2
+    my.boot.MLE <- numeric(N)
+    my.boot.MoM <- numeric(N)
+    for(j in 1:N)
+    {
+      s <- sample(x, 100, replace = TRUE) # draw resamples
+      my.boot.MLE[j] <- sum(s^2)/n # compute MLE variance, store in my.boot
+      my.boot.MoM[j] <- mean(s)^2*pi/2 # compute MoM variance, store in my.boot
+    }
+    mle_boot_lower[i] <- quantile(my.boot.MLE, c(0.025))
+    mle_boot_upper[i] <- quantile(my.boot.MLE, c(0.975))
+    
+    # CI based on bootstrapping the MoM
+    mom_boot_lower[i] <- quantile(my.boot.MoM, c(0.025))
+    mom_boot_upper[i] <- quantile(my.boot.MoM, c(0.975))
+  }
+  res <- list(est_mle, est_mom, mle_lower, mle_upper,
+              mle_boot_lower, mle_boot_upper, mom_boot_lower, mom_boot_upper)
+  names(res) <- c("est_mle", "est_mom", "mle_lower", "mle_upper", "mle_boot_lower",
+                  "mle_boot_upper", "mom_boot_lower", "mom_boot_upper")
+  return(res)
+}
+```
+
+### Coverage and Mean-length Functions
+
+```{R}
+getCoverage <- function(lower, upper, sigma){
+  n <- length(lower)
+  total.cover <- 0
+  for(i in 1:n){
+    cover.i <- mean((lower[i] <= sigma^2) & (sigma^2 <= upper[i]))
+    total.cover <- total.cover + cover.i
+  }
+  cover.rate <- total.cover/n
+  return(cover.rate)
+}
+getMeanLength <- function(upper, lower){
+  mean.length <- mean(upper - lower)
+  return(mean.length)
+}
+calculateCoverageAndMeanLength <- function(sigma, mle_lower, mle_upper,
+                              mle_boot_lower, mle_boot_upper,
+                              mom_boot_lower, mom_boot_upper){
+  mle.cover <- getCoverage(mle_lower, mle_upper, sigma)
+  mle.meanLength <- getMeanLength(mle_lower, mle_upper)
+  
+  mle_boot.cover <- getCoverage(mle_boot_lower, mle_boot_upper, sigma)
+  mle_boot.meanLength <- getMeanLength(mle_boot_lower, mle_boot_upper)
+  
+  mom_boot.cover <- getCoverage(mom_boot_lower, mom_boot_upper, sigma)
+  mom_boot.meanLength <- getMeanLength(mom_boot_lower, mom_boot_upper)
+  res <- list(mle.cover, mle_boot.cover, mom_boot.cover,
+       mle.meanLength, mle_boot.meanLength, mom_boot.meanLength)
+  names(res) <- c("mle.cover", "mle_boot.cover", "mom_boot.cover",
+                  "mle.meanLength", "mle_boot.meanLength", "mom_boot.meanLength")
+  return(res)
+}
+```
+
+### Error Analysis Functions
+
+```{R}
+getEstError <- function(est, sigma){
+  bias <- mean(est) - sigma^2  
+  perc_bias <- 100*bias/(sigma^2)  # bias as a percentage of sigma^2
+  mse <- mean((est - sigma^2)^2) # mean of squared deviations (est - truth)^2
+  res <- list(bias, perc_bias, mse)
+  names(res) <- c("bias", "perc_bias", "mse")
+  return(res)
+}
+getEstErrorMLE_MoM <- function(sigma, est_mle, est_mom){
+  est_mle.mean <- mean(est_mle)
+  est_mom.mean <- mean(est_mom)
+  est_mle.error <- getEstError(est_mle.mean, sigma)
+  est_mom.error <- getEstError(est_mom.mean, sigma)
+  res <- list(est_mle.error, est_mom.error)
+  names(res) <- c("est_mle.error", "est_mom.error")
+  return(res)
+}
+```
+
+### Results Functions
+
+```{R}
+organizeResults <- function(res.sim, res.cover.meanLength, res.err){
+  # results for mle
+  res.mle <- list(mean(res.sim[["est_mle"]]),
+               mean(res.sim[["mle_lower"]]),
+               mean(res.sim[["mle_upper"]]),
+               res.err[["est_mle.error"]]$bias,
+               res.err[["est_mle.error"]]$perc_bias,
+               res.err[["est_mle.error"]]$mse,
+               res.cover.meanLength[["mle.cover"]],
+               res.cover.meanLength[["mle.meanLength"]])
+  names(res.mle) <- c("mle.mean", "mle.lower.mean", "mle.upper.mean",
+                      "mle.err.bias", "mle.err.perc_bias",
+                      "mle.err.mse", "mle.cover", "mle.meanLength")
+  
+  res.mom <- list(mean(res.sim[["est_mom"]]),
+               res.err[["est_mom.error"]]$bias,
+               res.err[["est_mom.error"]]$perc_bias,
+               res.err[["est_mom.error"]]$mse)
+  names(res.mom) <- list("mom.mean", "mom.err.bias", "mom.err.perc_bias", "mom.err.mse")
+  
+  res.mle_boot <- list(mean(res.sim[["mle_boot_lower"]]),
+                    mean(res.sim[["mle_boot_upper"]]),
+                    res.cover.meanLength[["mle_boot.cover"]],
+                    res.cover.meanLength[["mle_boot.meanLength"]]) 
+  names(res.mle_boot) <- c("mle_boot.lower", "mle_boot.upper", "mle_boot.cover",
+                           "mle_boot.meanLength") 
+  
+  res.mom_boot <- list(mean(res.sim[["mom_boot_lower"]]),
+                    mean(res.sim[["mom_boot_upper"]]),
+                    res.cover.meanLength[["mom_boot.cover"]],
+                    res.cover.meanLength[["mom_boot.meanLength"]])
+  names(res.mom_boot) <- c("mom_boot.lower", "mom_boot.upper", "mom_boot.cover",
+                           "mom_boot.meanLength")
+  
+  res.list <- list(res.mle, res.mom, res.mle_boot, res.mom_boot)
+  names(res.list) <- c("res.mle", "res.mom", "res.mle_boot", "res.mom_boot")
+  return(res.list)
+}
+runSimulationAndAnalyze <- function(n, sigma, K){
+  res.sim <- runSimulation(n, sigma, K)
+  res.cover.meanLength <- calculateCoverageAndMeanLength(sigma, 
+                                 res.sim[["mle_lower"]], res.sim[["mle_upper"]],
+                                 res.sim[["mle_boot_lower"]], res.sim[["mle_boot_upper"]],
+                                 res.sim[["mom_boot_lower"]], res.sim[["mom_boot_upper"]])
+  res.err <- getEstErrorMLE_MoM(sigma, res.sim[["est_mle"]], res.sim[["est_mom"]])
+  
+  return(organizeResults(res.sim, res.cover.meanLength, res.err))
+}
+```
+
+# Experiment Code
+
+```{R}
+getEmptyResults2DList <- function(){
+  res.2DList.inner <- list(NA, NA, NA)
+  names(res.2DList.inner) <- c("sigma^2 = 0.1", "sigma^2 = 0.01", "sigma^2 = 0.001")
+  res.2DList.outer <- list(res.2DList.inner, res.2DList.inner, res.2DList.inner)
+  names(res.2DList.outer) <- c("n = 100", "n = 1000", "n = 10000")
+  return(res.2DList.outer)
+}
+getResultsForDifferentNAndSigmaSquared <- function(k = 10^3){
+  res.2DList <- getEmptyResults2DList()
+  res.2DList$`n = 100`$`sigma^2 = 0.1` <- runSimulationAndAnalyze(n = 100, sigma = sqrt(0.1), K = k)
+  res.2DList$`n = 1000`$`sigma^2 = 0.1` <- runSimulationAndAnalyze(n = 1000, sigma = sqrt(0.1), K = k)
+  res.2DList$`n = 10000`$`sigma^2 = 0.1` <- runSimulationAndAnalyze(n = 10000, sigma = sqrt(0.1), K = k)
+  
+  res.2DList$`n = 100`$`sigma^2 = 0.01` <- runSimulationAndAnalyze(n = 100, sigma = sqrt(0.01), K = k)
+  res.2DList$`n = 1000`$`sigma^2 = 0.01` <- runSimulationAndAnalyze(n = 1000, sigma = sqrt(0.01), K = k)
+  res.2DList$`n = 10000`$`sigma^2 = 0.01` <- runSimulationAndAnalyze(n = 10000, sigma = sqrt(0.01), K = k)
+  
+  res.2DList$`n = 100`$`sigma^2 = 0.001` <- runSimulationAndAnalyze(n = 100, sigma = sqrt(0.001), K = k)
+  res.2DList$`n = 1000`$`sigma^2 = 0.001` <- runSimulationAndAnalyze(n = 1000, sigma = sqrt(0.001), K = k)
+  res.2DList$`n = 10000`$`sigma^2 = 0.001` <- runSimulationAndAnalyze(n = 10000, sigma = sqrt(0.001), K = k)
+  
+  return(res.2DList)
+}
+
+res.2DList <- getResultsForDifferentNAndSigmaSquared(k = 10^4)
+```
+
+# Analysis Code
+
+### MSE Analysis
+```{R}
+res.mom.mse.s2.0.1 <- c(res.2DList$`n = 100`$`sigma^2 = 0.1`$res.mom$mom.err.mse,
+                        res.2DList$`n = 1000`$`sigma^2 = 0.1`$res.mom$mom.err.mse,
+                        res.2DList$`n = 10000`$`sigma^2 = 0.1`$res.mom$mom.err.mse)
+res.mom.mse.s2.0.01 <- c(res.2DList$`n = 100`$`sigma^2 = 0.01`$res.mom$mom.err.mse,
+                        res.2DList$`n = 1000`$`sigma^2 = 0.01`$res.mom$mom.err.mse,
+                        res.2DList$`n = 10000`$`sigma^2 = 0.01`$res.mom$mom.err.mse)
+res.mom.mse.s2.0.001 <- c(res.2DList$`n = 100`$`sigma^2 = 0.001`$res.mom$mom.err.mse,
+                         res.2DList$`n = 1000`$`sigma^2 = 0.001`$res.mom$mom.err.mse,
+                         res.2DList$`n = 10000`$`sigma^2 = 0.001`$res.mom$mom.err.mse)
+
+res.mle.mse.s2.0.1 <- c(res.2DList$`n = 100`$`sigma^2 = 0.1`$res.mle$mle.err.mse,
+                        res.2DList$`n = 1000`$`sigma^2 = 0.1`$res.mle$mle.err.mse,
+                        res.2DList$`n = 10000`$`sigma^2 = 0.1`$res.mle$mle.err.mse)
+res.mle.mse.s2.0.01 <- c(res.2DList$`n = 100`$`sigma^2 = 0.01`$res.mle$mle.err.mse,
+                         res.2DList$`n = 1000`$`sigma^2 = 0.01`$res.mle$mle.err.mse,
+                         res.2DList$`n = 10000`$`sigma^2 = 0.01`$res.mle$mle.err.mse)
+res.mle.mse.s2.0.001 <- c(res.2DList$`n = 100`$`sigma^2 = 0.001`$res.mle$mle.err.mse,
+                          res.2DList$`n = 1000`$`sigma^2 = 0.001`$res.mle$mle.err.mse,
+                          res.2DList$`n = 10000`$`sigma^2 = 0.001`$res.mle$mle.err.mse)
+
+library(ggplot2)
+df2 <- data.frame(sigma = c(rep(c("mom, sigma^2 = 0.1", "mom, sigma^2 = 0.01", "mom, sigma^2 = 0.001"), each=3),
+                            rep(c("mle, sigma^2 = 0.1", "mle, sigma^2 = 0.01", "mle, sigma^2 = 0.001"), each=3)),
+                  negative.log.mse = c(-log(res.mom.mse.s2.0.1),
+                          -log(res.mom.mse.s2.0.01),
+                          -log(res.mom.mse.s2.0.001),
+                          -log(res.mle.mse.s2.0.1),
+                          -log(res.mle.mse.s2.0.01),
+                          -log(res.mle.mse.s2.0.001)),
+                  log.n=rep(log(c(100, 1000, 10000)), 6))
+ggplot(df2, aes(x=log.n, y=negative.log.mse, group=sigma)) +
+  geom_line(aes(color=sigma))+
+  scale_color_manual(values=c("cyan", "cyan4", "darkslategray", "salmon", "red", "darkred"))+
+  geom_point(aes(color=sigma))
+```
+
+### Cover Analysis
+```{R}
+res.mle.cover.s2.0.1 <- c(res.2DList$`n = 100`$`sigma^2 = 0.1`$res.mle$mle.cover,
+                          res.2DList$`n = 1000`$`sigma^2 = 0.1`$res.mle$mle.cover,
+                          res.2DList$`n = 10000`$`sigma^2 = 0.1`$res.mle$mle.cover)
+res.mle.cover.s2.0.01 <- c(res.2DList$`n = 100`$`sigma^2 = 0.01`$res.mle$mle.cover,
+                           res.2DList$`n = 1000`$`sigma^2 = 0.01`$res.mle$mle.cover,
+                           res.2DList$`n = 10000`$`sigma^2 = 0.01`$res.mle$mle.cover)
+res.mle.cover.s2.0.001 <- c(res.2DList$`n = 100`$`sigma^2 = 0.001`$res.mle$mle.cover,
+                            res.2DList$`n = 1000`$`sigma^2 = 0.001`$res.mle$mle.cover,
+                            res.2DList$`n = 10000`$`sigma^2 = 0.001`$res.mle$mle.cover)
+rbind(res.mle.cover.s2.0.1, res.mle.cover.s2.0.01, res.mle.cover.s2.0.001)
+
+res.mle_boot.cover.s2.0.1 <- c(res.2DList$`n = 100`$`sigma^2 = 0.1`$res.mle_boot$mle_boot.cover,
+                               res.2DList$`n = 1000`$`sigma^2 = 0.1`$res.mle_boot$mle_boot.cover,
+                               res.2DList$`n = 10000`$`sigma^2 = 0.1`$res.mle_boot$mle_boot.cover)
+res.mle_boot.cover.s2.0.01 <- c(res.2DList$`n = 100`$`sigma^2 = 0.01`$res.mle_boot$mle_boot.cover,
+                                res.2DList$`n = 1000`$`sigma^2 = 0.01`$res.mle_boot$mle_boot.cover,
+                                res.2DList$`n = 10000`$`sigma^2 = 0.01`$res.mle_boot$mle_boot.cover)
+res.mle_boot.cover.s2.0.001 <- c(res.2DList$`n = 100`$`sigma^2 = 0.001`$res.mle_boot$mle_boot.cover,
+                                 res.2DList$`n = 1000`$`sigma^2 = 0.001`$res.mle_boot$mle_boot.cover,
+                                 res.2DList$`n = 10000`$`sigma^2 = 0.001`$res.mle_boot$mle_boot.cover)
+rbind(res.mle_boot.cover.s2.0.1, res.mle_boot.cover.s2.0.01, res.mle_boot.cover.s2.0.001)
+
+res.mom_boot.cover.s2.0.1 <- c(res.2DList$`n = 100`$`sigma^2 = 0.1`$res.mom_boot$mom_boot.cover,
+                               res.2DList$`n = 1000`$`sigma^2 = 0.1`$res.mom_boot$mom_boot.cover,
+                               res.2DList$`n = 10000`$`sigma^2 = 0.1`$res.mom_boot$mom_boot.cover)
+res.mom_boot.cover.s2.0.01 <- c(res.2DList$`n = 100`$`sigma^2 = 0.01`$res.mom_boot$mom_boot.cover,
+                                res.2DList$`n = 1000`$`sigma^2 = 0.01`$res.mom_boot$mom_boot.cover,
+                                res.2DList$`n = 10000`$`sigma^2 = 0.01`$res.mom_boot$mom_boot.cover)
+res.mom_boot.cover.s2.0.001 <- c(res.2DList$`n = 100`$`sigma^2 = 0.001`$res.mom_boot$mom_boot.cover,
+                                 res.2DList$`n = 1000`$`sigma^2 = 0.001`$res.mom_boot$mom_boot.cover,
+                                 res.2DList$`n = 10000`$`sigma^2 = 0.001`$res.mom_boot$mom_boot.cover)
+rbind(res.mom_boot.cover.s2.0.1, res.mom_boot.cover.s2.0.01, res.mom_boot.cover.s2.0.001)
+
+plot.cover.df <- data.frame(sigma = c(rep("mle",3),rep("mle_boot",3),rep("moom_boot",3)),
+                  cover = c(res.mle.cover.s2.0.1,
+                            res.mle_boot.cover.s2.0.1,
+                            res.mom_boot.cover.s2.0.1),
+                  log.n=rep(log(c(100, 1000, 10000)), 3))
+plot.cover <- ggplot(plot.cover.df, aes(x=log.n, y=cover, group=sigma)) +
+  geom_line(aes(color=sigma))+
+  scale_color_manual(values=c("cyan4", "red", "chartreuse3"))+
+  geom_point(aes(color=sigma))
+plot.cover
+```
+
+### Mean Length Analysis
+```{R}
+res.mle.meanLength.s2.0.1 <- c(res.2DList$`n = 100`$`sigma^2 = 0.1`$res.mle$mle.meanLength,
+                               res.2DList$`n = 1000`$`sigma^2 = 0.1`$res.mle$mle.meanLength,
+                               res.2DList$`n = 10000`$`sigma^2 = 0.1`$res.mle$mle.meanLength)
+res.mle.meanLength.s2.0.01 <- c(res.2DList$`n = 100`$`sigma^2 = 0.01`$res.mle$mle.meanLength,
+                                res.2DList$`n = 1000`$`sigma^2 = 0.01`$res.mle$mle.meanLength,
+                                res.2DList$`n = 10000`$`sigma^2 = 0.01`$res.mle$mle.meanLength)
+res.mle.meanLength.s2.0.001 <- c(res.2DList$`n = 100`$`sigma^2 = 0.001`$res.mle$mle.meanLength,
+                                 res.2DList$`n = 1000`$`sigma^2 = 0.001`$res.mle$mle.meanLength,
+                                 res.2DList$`n = 10000`$`sigma^2 = 0.001`$res.mle$mle.meanLength)
+rbind(res.mle.meanLength.s2.0.1, res.mle.meanLength.s2.0.01, res.mle.meanLength.s2.0.001)
+
+res.mle_boot.meanLength.s2.0.1 <- c(res.2DList$`n = 100`$`sigma^2 = 0.1`$res.mle_boot$mle_boot.meanLength,
+                                    res.2DList$`n = 1000`$`sigma^2 = 0.1`$res.mle_boot$mle_boot.meanLength,
+                                    res.2DList$`n = 10000`$`sigma^2 = 0.1`$res.mle_boot$mle_boot.meanLength)
+res.mle_boot.meanLength.s2.0.01 <- c(res.2DList$`n = 100`$`sigma^2 = 0.01`$res.mle_boot$mle_boot.meanLength,
+                                     res.2DList$`n = 1000`$`sigma^2 = 0.01`$res.mle_boot$mle_boot.meanLength,
+                                     res.2DList$`n = 10000`$`sigma^2 = 0.01`$res.mle_boot$mle_boot.meanLength)
+res.mle_boot.meanLength.s2.0.001 <- c(res.2DList$`n = 100`$`sigma^2 = 0.001`$res.mle_boot$mle_boot.meanLength,
+                                      res.2DList$`n = 1000`$`sigma^2 = 0.001`$res.mle_boot$mle_boot.meanLength,
+                                      res.2DList$`n = 10000`$`sigma^2 = 0.001`$res.mle_boot$mle_boot.meanLength)
+rbind(res.mle_boot.meanLength.s2.0.1, res.mle_boot.meanLength.s2.0.01, res.mle_boot.meanLength.s2.0.001)
+
+res.mom_boot.meanLength.s2.0.1 <- c(res.2DList$`n = 100`$`sigma^2 = 0.1`$res.mom_boot$mom_boot.meanLength,
+                                    res.2DList$`n = 1000`$`sigma^2 = 0.1`$res.mom_boot$mom_boot.meanLength,
+                                    res.2DList$`n = 10000`$`sigma^2 = 0.1`$res.mom_boot$mom_boot.meanLength)
+res.mom_boot.meanLength.s2.0.01 <- c(res.2DList$`n = 100`$`sigma^2 = 0.01`$res.mom_boot$mom_boot.meanLength,
+                                     res.2DList$`n = 1000`$`sigma^2 = 0.01`$res.mom_boot$mom_boot.meanLength,
+                                     res.2DList$`n = 10000`$`sigma^2 = 0.01`$res.mom_boot$mom_boot.meanLength)
+res.mom_boot.meanLength.s2.0.001 <- c(res.2DList$`n = 100`$`sigma^2 = 0.001`$res.mom_boot$mom_boot.meanLength,
+                                      res.2DList$`n = 1000`$`sigma^2 = 0.001`$res.mom_boot$mom_boot.meanLength,
+                                      res.2DList$`n = 10000`$`sigma^2 = 0.001`$res.mom_boot$mom_boot.meanLength)
+rbind(res.mom_boot.meanLength.s2.0.1, res.mom_boot.meanLength.s2.0.01, res.mom_boot.meanLength.s2.0.001)
+
+plot.meanLength.df <- data.frame(sigma = c(rep(c("mle, sigma^2 = 0.1", "mle, sigma^2 = 0.01", "mle, sigma^2 = 0.001"), each=3),
+                                    rep(c("mle_boot, sigma^2 = 0.1", "mle_boot, sigma^2 = 0.01", "mle_boot, sigma^2 = 0.001"), each=3),
+                                    rep(c("mom_boot, sigma^2 = 0.1", "mom_boot, sigma^2 = 0.01", "mom_boot, sigma^2 = 0.001"), each=3)),
+                          meanLength = c(res.mle.meanLength.s2.0.1,
+                                               res.mle.meanLength.s2.0.01,
+                                               res.mle.meanLength.s2.0.001,
+                                               res.mle_boot.meanLength.s2.0.1,
+                                               res.mle_boot.meanLength.s2.0.01,
+                                               res.mle_boot.meanLength.s2.0.001,
+                                               res.mom_boot.meanLength.s2.0.1,
+                                               res.mom_boot.meanLength.s2.0.01,
+                                               res.mom_boot.meanLength.s2.0.001),
+                          log.n=rep(log(c(100, 1000, 10000)), 9))
+plot.meanLength <- ggplot(plot.meanLength.df, aes(x=log.n, y=meanLength, group=sigma)) +
+  geom_line(aes(color=sigma))+
+  scale_color_manual(values=c("cyan", "cyan4", "darkblue", "salmon", "red", "darkred",
+                              "chartreuse", "chartreuse3", "darkgreen"))+
+  geom_point(aes(color=sigma))
+plot.meanLength
+```
