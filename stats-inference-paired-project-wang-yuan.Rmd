@@ -2,6 +2,8 @@
 title: "R Notebook"
 output: html_notebook
 author: "Alec Wang and Allen Yuan"
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ## Problem 1. Derivations.
@@ -153,6 +155,9 @@ We found that for MLE 95% confidence interval is $(\frac{\sum_{i=1}^{n} X^2}{q_{
 q_0.975 <- qgamma(0.975,shape = n/2, 1/2)
 q_0.025 <- qgamma(0.025,shape = n/2, 1/2)
 
+mle_lower <- c()
+mle_upper <- c()
+
 # based on exact MLE CI (part d)
 mle_lower[i] <- sum(x^2)/(q_0.975)
 # based on exact MLE CI (part d)
@@ -262,32 +267,41 @@ Note that you can compute the exact bias values for both estimators (part c), so
 #### Part 7
 Compare interval estimates in (4) by looking at how often they cover the true value of $\sigma^2$ and their mean length:
 ```{R}
-mle_lower.mean <- mean(mle_lower)
-mle_upper.mean <- mean(mle_upper)
-mle_boot_lower.mean <- mean(mle_boot_lower)
-mle_boot_upper.mean <- mean(mle_boot_upper)
-mom_boot_lower.mean <- mean(mom_boot_lower)
-mom_boot_upper.mean <- mean(mom_boot_upper)
-
 getCoverage <- function(lower, upper, sigma){
-  cover <- mean((lower <= sigma^2) & (sigma^2 <= upper))
+  n <- length(lower)
+  total.cover <- 0
+  for(i in 1:n){
+    cover.i <- mean((lower[i] <= sigma^2) & (sigma^2 <= upper[i]))
+    total.cover <- total.cover + cover.i
+  }
+  cover.rate <- total.cover/n
+  return(cover.rate)
 }
 getMeanLength <- function(upper, lower){
   mean.length <- mean(upper - lower)
 }
 
-mle.cover <- getCoverage(mle_lower.mean, mle_upper.mean, sigma)
-mle.meanLength <- getMeanLength(mle_lower.mean, mle_upper.mean)
+mle.cover <- getCoverage(mle_lower, mle_upper, sigma)
+mle.meanLength <- getMeanLength(mle_lower, mle_upper)
 
-mle_boot.cover <- getCoverage(mle_boot_lower.mean, mle_boot_upper.mean, sigma)
-mle_boot.meanLength <- getMeanLength(mle_boot_lower.mean, mle_boot_upper.mean)
+mle_boot.cover <- getCoverage(mle_boot_lower, mle_boot_upper, sigma)
+mle_boot.meanLength <- getMeanLength(mle_boot_lower, mle_boot_upper)
 
-mom_boot.cover <- getCoverage(mom_boot_lower.mean, mom_boot_upper.mean, sigma)
-mom_boot.meanLength <- getMeanLength(mom_boot_lower.mean, mom_boot_upper.mean)
+mom_boot.cover <- getCoverage(mom_boot_lower, mom_boot_upper, sigma)
+mom_boot.meanLength <- getMeanLength(mom_boot_lower, mom_boot_upper)
+
+mle.cover
+mle_boot.cover
+mom_boot.cover
+
+mle.meanLength
+mle_boot.meanLength
+mom_boot.meanLength
+
 ```
 We would like to have a coverage rate close to 95% (because that is what we are claiming for our confidence level). If two intervals have rates of about 95%, then we would prefer the interval that is shorter in mean length.
 
-mle.cover does not cover $\sigma^2.$ mle_boot.cover and mom_boot.cover both cover $\sigma^2.$
+mle.cover does not cover $\sigma^2.$. It has a coverage rate of 0. mle_boot.cover and mom_boot.cover both cover $\sigma^2.$ mle_boot.cover has a coverage rate of 0.99. mom_boot.cover has a coverage rate of 1.
 
 #### Part 8
 Finally, some estimator properties may depend on your initial simulation values ($n$ and $\sigma^2$). You should explore how changing these values affects your conclusions about which point and interval estimators are “best.”
