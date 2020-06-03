@@ -369,5 +369,13 @@ mean(my.boot.MoM)
 quantile(my.boot.MoM, c(0.025))
 quantile(my.boot.MoM, c(0.975))
 ```
-p_0.5 = $e^(-(0.5)^2/(2*0.2345318) = 0.5868554364
-p_1 =$e^(-(0.5)^2/(2*0.2345318) = 0.1186108801
+
+Code to calculate the Bergen probabilities
+```{R}
+probability.zebra.mussel <- function(x, sigma.squared){
+  exp(1)^(-(x)^2/(2*sigma.squared))
+}
+sigma.squared <- mean(my.boot.MoM)
+probability.zebra.mussel(0.5, sigma.squared)
+probability.zebra.mussel(1, sigma.squared)
+```
