@@ -76,7 +76,7 @@ getCoverage <- function(lower, upper, sigma){
   cover.rate <- total.cover/n
   return(cover.rate)
 }
-getMeanLength <- function(upper, lower){
+getMeanLength <- function(lower, upper){
   mean.length <- mean(upper - lower)
   return(mean.length)
 }
@@ -229,7 +229,7 @@ res.mle.mse.s2.0.001 <- c(res.2DList$`n = 100`$`sigma^2 = 0.001`$res.mle$mle.err
                           res.2DList$`n = 10000`$`sigma^2 = 0.001`$res.mle$mle.err.mse)
 
 library(ggplot2)
-df2 <- data.frame(sigma = c(rep(c("mom, sigma^2 = 0.1", "mom, sigma^2 = 0.01", "mom, sigma^2 = 0.001"), each=3),
+df2 <- data.frame(estimator = c(rep(c("mom, sigma^2 = 0.1", "mom, sigma^2 = 0.01", "mom, sigma^2 = 0.001"), each=3),
                             rep(c("mle, sigma^2 = 0.1", "mle, sigma^2 = 0.01", "mle, sigma^2 = 0.001"), each=3)),
                   negative.log.mse = c(-log(res.mom.mse.s2.0.1),
                           -log(res.mom.mse.s2.0.01),
@@ -238,10 +238,10 @@ df2 <- data.frame(sigma = c(rep(c("mom, sigma^2 = 0.1", "mom, sigma^2 = 0.01", "
                           -log(res.mle.mse.s2.0.01),
                           -log(res.mle.mse.s2.0.001)),
                   log.n=rep(log(c(100, 1000, 10000)), 6))
-ggplot(df2, aes(x=log.n, y=negative.log.mse, group=sigma)) +
-  geom_line(aes(color=sigma))+
+ggplot(df2, aes(x=log.n, y=negative.log.mse, group=estimator)) +
+  geom_line(aes(color=estimator))+
   scale_color_manual(values=c("cyan", "cyan4", "darkslategray", "salmon", "red", "darkred"))+
-  geom_point(aes(color=sigma))
+  geom_point(aes(color=estimator))
 ```
 
 ### Cover Analysis
@@ -279,15 +279,15 @@ res.mom_boot.cover.s2.0.001 <- c(res.2DList$`n = 100`$`sigma^2 = 0.001`$res.mom_
                                  res.2DList$`n = 10000`$`sigma^2 = 0.001`$res.mom_boot$mom_boot.cover)
 rbind(res.mom_boot.cover.s2.0.1, res.mom_boot.cover.s2.0.01, res.mom_boot.cover.s2.0.001)
 
-plot.cover.df <- data.frame(sigma = c(rep("mle",3),rep("mle_boot",3),rep("moom_boot",3)),
+plot.cover.df <- data.frame(estimator = c(rep("mle",3),rep("mle_boot",3),rep("mom_boot",3)),
                   cover = c(res.mle.cover.s2.0.1,
                             res.mle_boot.cover.s2.0.1,
                             res.mom_boot.cover.s2.0.1),
                   log.n=rep(log(c(100, 1000, 10000)), 3))
-plot.cover <- ggplot(plot.cover.df, aes(x=log.n, y=cover, group=sigma)) +
-  geom_line(aes(color=sigma))+
+plot.cover <- ggplot(plot.cover.df, aes(x=log.n, y=cover, group=estimator)) +
+  geom_line(aes(color=estimator))+
   scale_color_manual(values=c("cyan4", "red", "chartreuse3"))+
-  geom_point(aes(color=sigma))
+  geom_point(aes(color=estimator))
 plot.cover
 ```
 
@@ -326,10 +326,10 @@ res.mom_boot.meanLength.s2.0.001 <- c(res.2DList$`n = 100`$`sigma^2 = 0.001`$res
                                       res.2DList$`n = 10000`$`sigma^2 = 0.001`$res.mom_boot$mom_boot.meanLength)
 rbind(res.mom_boot.meanLength.s2.0.1, res.mom_boot.meanLength.s2.0.01, res.mom_boot.meanLength.s2.0.001)
 
-plot.meanLength.df <- data.frame(sigma = c(rep(c("mle, sigma^2 = 0.1", "mle, sigma^2 = 0.01", "mle, sigma^2 = 0.001"), each=3),
+plot.meanLength.df <- data.frame(estimator = c(rep(c("mle, sigma^2 = 0.1", "mle, sigma^2 = 0.01", "mle, sigma^2 = 0.001"), each=3),
                                     rep(c("mle_boot, sigma^2 = 0.1", "mle_boot, sigma^2 = 0.01", "mle_boot, sigma^2 = 0.001"), each=3),
                                     rep(c("mom_boot, sigma^2 = 0.1", "mom_boot, sigma^2 = 0.01", "mom_boot, sigma^2 = 0.001"), each=3)),
-                          meanLength = c(res.mle.meanLength.s2.0.1,
+                          negative.log.meanLength = -log(abs(c(res.mle.meanLength.s2.0.1,
                                                res.mle.meanLength.s2.0.01,
                                                res.mle.meanLength.s2.0.001,
                                                res.mle_boot.meanLength.s2.0.1,
@@ -337,13 +337,13 @@ plot.meanLength.df <- data.frame(sigma = c(rep(c("mle, sigma^2 = 0.1", "mle, sig
                                                res.mle_boot.meanLength.s2.0.001,
                                                res.mom_boot.meanLength.s2.0.1,
                                                res.mom_boot.meanLength.s2.0.01,
-                                               res.mom_boot.meanLength.s2.0.001),
+                                               res.mom_boot.meanLength.s2.0.001))),
                           log.n=rep(log(c(100, 1000, 10000)), 9))
-plot.meanLength <- ggplot(plot.meanLength.df, aes(x=log.n, y=meanLength, group=sigma)) +
-  geom_line(aes(color=sigma))+
+plot.meanLength <- ggplot(plot.meanLength.df, aes(x=log.n, y=negative.log.meanLength, group=estimator)) +
+  geom_line(aes(color=estimator))+
   scale_color_manual(values=c("cyan", "cyan4", "darkblue", "salmon", "red", "darkred",
                               "chartreuse", "chartreuse3", "darkgreen"))+
-  geom_point(aes(color=sigma))
+  geom_point(aes(color=estimator))
 plot.meanLength
 ```
 
